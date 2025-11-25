@@ -283,8 +283,25 @@
     </div>
 
     <div class="footnote">
-      Spacebar = +1 &nbsp;•&nbsp; R = reset &nbsp;•&nbsp; ← / → = ±1
+      Spacebar = +1 • R = reset • ← / → = ±1
     </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!--                  BRANDING SUKOR RIJA                      -->
+  <!-- ========================================================= -->
+  <div style="
+    margin-top: 20px;
+    font-size: 0.75rem;
+    text-align: center;
+    color: #6b7280;
+    line-height: 1.4;
+    opacity: 0.9;
+  ">
+    <strong>Sukor Rija WebApps – Tasbih Counter</strong><br>
+    <span style="font-size: 0.7rem; opacity: 0.8;">
+      Powered by GitHub &amp; Lisa ChatGPT
+    </span>
   </div>
 
   <script>
@@ -301,12 +318,11 @@
 
     let count = 0;
     let target = parseInt(targetInput.value, 10) || 33;
-    let vibro = true; // simple vib mode on/off
+    let vibro = true;
 
     function updateDisplay() {
       countEl.textContent = count;
       targetText.textContent = "/ " + target;
-
       const ratio = Math.max(0, Math.min(1, count / target));
       progressInner.style.width = (ratio * 100).toFixed(2) + "%";
     }
@@ -347,41 +363,29 @@
       vibrateShort();
     }
 
-    // Events
     mainBtn.addEventListener("click", increment);
     minusBtn.addEventListener("click", decrement);
+
     resetBtn.addEventListener("click", () => {
       if (confirm("Reset kiraan?")) reset();
     });
+
     setZeroBtn.addEventListener("click", reset);
 
     targetInput.addEventListener("input", () => {
       const val = parseInt(targetInput.value, 10);
-      if (!isNaN(val) && val > 0) {
-        target = val;
-      } else {
-        target = 33;
-      }
+      if (!isNaN(val) && val > 0) target = val;
+      else target = 33;
       updateDisplay();
     });
 
-    // Mode toggle: Manual / Senyap (vibrate off)
     modeToggle.addEventListener("click", () => {
       vibro = !vibro;
       modeLabel.textContent = vibro ? "Manual" : "Senyap";
     });
 
-    modeToggle.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        modeToggle.click();
-      }
-    });
-
-    // Keyboard shortcuts
     document.addEventListener("keydown", (e) => {
-      if (e.repeat) return; // elak hold key
-
+      if (e.repeat) return;
       if (e.code === "Space") {
         e.preventDefault();
         increment();
@@ -394,7 +398,6 @@
       }
     });
 
-    // Initial
     updateDisplay();
   </script>
 </body>
