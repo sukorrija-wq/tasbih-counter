@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasbih Counter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      color: #e5e7eb;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px 18px 24px;
+      border-radius: 22px;
+      background: rgba(15, 23, 42, 0.96);
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .mode-toggle span {
+      font-size: 0.8rem;
+    }
+
+    .count-card {
+      margin: 14px 0 18px;
+      padding: 16px 14px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .target-input {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+
+    .target-input input {
+      width: 64px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .target-input input:focus {
+      border-color: #22c55e;
+    }
+
+    .count-display {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .count {
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.06em;
+    }
+
+    .target-text {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #4ade80, #a3e635);
+      transition: width 0.15s ease-out;
+    }
+
+    .main-btn {
+      margin-top: 6px;
+      width: 100%;
+      height: 180px;
+      border-radius: 22px;
+      border: none;
+      background: radial-gradient(circle at top, #22c55e, #15803d);
+      color: #ecfdf5;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        0 18px 35px rgba(22, 163, 74, 0.55),
+        0 0 0 1px rgba(21, 128, 61, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .main-btn:active {
+      transform: scale(0.97) translateY(2px);
+      box-shadow:
+        0 10px 20px rgba(22, 163, 74, 0.5),
+        0 0 0 1px rgba(22, 163, 74, 0.9);
+    }
+
+    .main-btn small {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .controls {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.96);
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      user-select: none;
+    }
+
+    .ctrl-btn:active {
+      transform: translateY(1px);
+      background: rgba(30, 64, 175, 0.85);
+    }
+
+    .ctrl-btn.danger {
+      border-color: rgba(248, 113, 113, 0.7);
+      color: #fecaca;
+    }
+
+    .footnote {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        margin: 10px;
+        padding: 18px 14px 20px;
+      }
+
+      .main-btn {
+        height: 160px;
+      }
+
+      .count {
+        font-size: 2.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div>
+        <div class="title">Tasbih Counter</div>
+        <div class="subtitle">Tap butang hijau atau tekan spacebar</div>
+      </div>
+      <div id="modeToggle" class="mode-toggle" tabindex="0">
+        <span>🤲</span>
+        <span id="modeLabel">Manual</span>
+      </div>
+    </div>
+
+    <div class="count-card">
+      <div class="label-row">
+        <span>Kiraan semasa</span>
+        <div class="target-input">
+          <span>Sasaran:</span>
+          <input type="number" id="targetInput" min="1" step="1" value="33" />
+        </div>
+      </div>
+
+      <div class="count-display">
+        <div id="count" class="count">0</div>
+        <div id="targetText" class="target-text">/ 33</div>
+      </div>
+
+      <div class="progress-bar">
+        <div id="progressInner" class="progress-inner"></div>
+      </div>
+    </div>
+
+    <button id="mainBtn" class="main-btn">
+      <small>TAP UNTUK TAMBAH</small>
+      <span>+1</span>
+    </button>
+
+    <div class="controls">
+      <button id="minusBtn" class="ctrl-btn">−1</button>
+      <button id="resetBtn" class="ctrl-btn danger">Reset</button>
+      <button id="setZeroBtn" class="ctrl-btn">Set 0</button>
+    </div>
+
+    <div class="footnote">
+      Spacebar = +1 &nbsp;•&nbsp; R = reset &nbsp;•&nbsp; ← / → = ±1
+    </div>
+  </div>
+
+  <script>
+    const countEl = document.getElementById("count");
+    const targetInput = document.getElementById("targetInput");
+    const targetText = document.getElementById("targetText");
+    const progressInner = document.getElementById("progressInner");
+    const mainBtn = document.getElementById("mainBtn");
+    const minusBtn = document.getElementById("minusBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const setZeroBtn = document.getElementById("setZeroBtn");
+    const modeToggle = document.getElementById("modeToggle");
+    const modeLabel = document.getElementById("modeLabel");
+
+    let count = 0;
+    let target = parseInt(targetInput.value, 10) || 33;
+    let vibro = true; // simple vib mode on/off
+
+    function updateDisplay() {
+      countEl.textContent = count;
+      targetText.textContent = "/ " + target;
+
+      const ratio = Math.max(0, Math.min(1, count / target));
+      progressInner.style.width = (ratio * 100).toFixed(2) + "%";
+    }
+
+    function vibrateShort() {
+      if (!("vibrate" in navigator)) return;
+      if (!vibro) return;
+      navigator.vibrate(15);
+    }
+
+    function vibrateTargetReached() {
+      if (!("vibrate" in navigator)) return;
+      if (!vibro) return;
+      navigator.vibrate([60, 40, 60]);
+    }
+
+    function increment() {
+      count++;
+      updateDisplay();
+      if (count === target) {
+        vibrateTargetReached();
+      } else {
+        vibrateShort();
+      }
+    }
+
+    function decrement() {
+      if (count > 0) {
+        count--;
+        updateDisplay();
+        vibrateShort();
+      }
+    }
+
+    function reset() {
+      count = 0;
+      updateDisplay();
+      vibrateShort();
+    }
+
+    // Events
+    mainBtn.addEventListener("click", increment);
+    minusBtn.addEventListener("click", decrement);
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Reset kiraan?")) reset();
+    });
+    setZeroBtn.addEventListener("click", reset);
+
+    targetInput.addEventListener("input", () => {
+      const val = parseInt(targetInput.value, 10);
+      if (!isNaN(val) && val > 0) {
+        target = val;
+      } else {
+        target = 33;
+      }
+      updateDisplay();
+    });
+
+    // Mode toggle: Manual / Senyap (vibrate off)
+    modeToggle.addEventListener("click", () => {
+      vibro = !vibro;
+      modeLabel.textContent = vibro ? "Manual" : "Senyap";
+    });
+
+    modeToggle.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        modeToggle.click();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (e.repeat) return; // elak hold key
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        increment();
+      } else if (e.key === "ArrowLeft") {
+        decrement();
+      } else if (e.key === "ArrowRight") {
+        increment();
+      } else if (e.key === "r" || e.key === "R") {
+        reset();
+      }
+    });
+
+    // Initial
+    updateDisplay();
+  </script>
+</body>
+</html>
